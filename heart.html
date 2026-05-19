@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Love Heart Animation</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      overflow: hidden;
+      background: radial-gradient(circle at center, #32101d, #050505 75%);
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .title {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 64px;
+      color: white;
+      font-weight: bold;
+      z-index: 20;
+      opacity: 0;
+      text-shadow: 0 0 25px white;
+      animation: titleShow 2s ease forwards;
+      animation-delay: 4.5s;
+    }
+
+    .start-btn {
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 16px 36px;
+      font-size: 22px;
+      font-weight: bold;
+      color: white;
+      background: #ff1744;
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+      z-index: 50;
+      box-shadow:
+        0 0 15px #ff1744,
+        0 0 35px #ff1744;
+      transition: 0.3s;
+    }
+
+    .start-btn:hover {
+      transform: translate(-50%, -50%) scale(1.08);
+      box-shadow:
+        0 0 25px #ff1744,
+        0 0 55px #ff1744;
+    }
+
+    .status {
+      position: absolute;
+      top: 60%;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #ff9bb0;
+      font-family: monospace;
+      font-size: 15px;
+      z-index: 21;
+      opacity: 0;
+      text-shadow: 0 0 12px #ff4d6d;
+      animation: statusShow 2s ease forwards;
+      animation-delay: 1s;
+    }
+
+    .love {
+      position: absolute;
+      color: #ff4d6d;
+      font-size: 18px;
+      font-weight: bold;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      text-shadow:
+        0 0 5px #ff4d6d,
+        0 0 12px #ff1744,
+        0 0 24px #ff0033;
+      animation:
+        popIn 1.2s ease forwards,
+        glow 1.8s ease-in-out infinite alternate,
+        float 4s ease-in-out infinite;
+    }
+
+    @keyframes popIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.2) translateY(30px);
+        filter: blur(5px);
+      }
+
+      60% {
+        opacity: 1;
+        transform: scale(1.2) translateY(0);
+        filter: blur(0);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow:
+          0 0 5px #ff4d6d,
+          0 0 12px #ff1744;
+      }
+
+      to {
+        text-shadow:
+          0 0 10px #ff8fab,
+          0 0 25px #ff1744,
+          0 0 40px #ff0033;
+      }
+    }
+
+    @keyframes float {
+      0% {
+        margin-top: 0;
+      }
+
+      50% {
+        margin-top: -8px;
+      }
+
+      100% {
+        margin-top: 0;
+      }
+    }
+
+    @keyframes titleShow {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.7);
+      }
+
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    @keyframes statusShow {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .hide {
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .title {
+        font-size: 42px;
+      }
+
+      .love {
+        font-size: 13px;
+      }
+
+      .start-btn {
+        font-size: 18px;
+        padding: 14px 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container" id="container">
+    <button class="start-btn" id="startBtn">Start Heart</button>
+    <div class="title">Love you.</div>
+    <div class="status">[system] Initializing heart.PROTOCOL_v2.0...</div>
+  </div>
+
+  <script>
+    const container = document.getElementById("container");
+    const startBtn = document.getElementById("startBtn");
+
+    const message = "I love you";
+
+    startBtn.addEventListener("click", () => {
+      startBtn.classList.add("hide");
+      createHeartAnimation();
+    });
+
+    function heartPoint(t, scale) {
+      const x = 16 * Math.pow(Math.sin(t), 3);
+      const y = -(
+        13 * Math.cos(t) -
+        5 * Math.cos(2 * t) -
+        2 * Math.cos(3 * t) -
+        Math.cos(4 * t)
+      );
+
+      return {
+        x: x * scale,
+        y: y * scale
+      };
+    }
+
+    function createText(x, y, delay, size = 18, color = "#ff4d6d") {
+      const love = document.createElement("div");
+      love.className = "love";
+      love.innerText = message;
+
+      love.style.left = x + "px";
+      love.style.top = y + "px";
+      love.style.fontSize = size + "px";
+      love.style.color = color;
+      love.style.animationDelay = `${delay}s, ${delay}s, ${delay}s`;
+
+      container.appendChild(love);
+    }
+
+    function createHeartAnimation() {
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2.25;
+      const scale = Math.min(window.innerWidth, window.innerHeight) / 38;
+
+      let delay = 0;
+
+      // 1. Outer border forms first
+      for (let i = 0; i < 180; i++) {
+        const t = (Math.PI * 2 * i) / 180;
+        const point = heartPoint(t, scale * 1.35);
+
+        const randomX = (Math.random() - 0.5) * 20;
+        const randomY = (Math.random() - 0.5) * 20;
+
+        createText(
+          centerX + point.x + randomX,
+          centerY + point.y + randomY,
+          delay,
+          random(15, 21),
+          "#ff5c7a"
+        );
+
+        delay += 0.018;
+      }
+
+      // 2. Middle layer appears after border
+      for (let layer = 1.1; layer >= 0.65; layer -= 0.12) {
+        for (let i = 0; i < 100; i++) {
+          const t = Math.random() * Math.PI * 2;
+          const point = heartPoint(t, scale * layer);
+
+          createText(
+            centerX + point.x + random(-28, 28),
+            centerY + point.y + random(-28, 28),
+            delay + random(0, 0.5),
+            random(13, 18),
+            "#ff3d68"
+          );
+        }
+
+        delay += 0.45;
+      }
+
+      // 3. Inner spark fills the middle last
+      setTimeout(() => {
+        for (let i = 0; i < 180; i++) {
+          createText(
+            centerX + random(-120, 120),
+            centerY + random(-180, 170),
+            random(0, 1.2),
+            random(12, 18),
+            "#ffd1dc"
+          );
+        }
+      }, 3400);
+    }
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+  </script>
+</body>
+</html>
